@@ -202,7 +202,7 @@ export function useChat() {
 
       if (savedMsg) {
         setMessages(prev => prev.map((m, i) =>
-          i === prev.length - 1 ? savedMsg as Message : m
+          i === prev.length - 1 ? (savedMsg as unknown as Message) : m
         ));
       }
     } catch (error) {
