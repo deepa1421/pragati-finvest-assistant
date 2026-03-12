@@ -133,7 +133,7 @@ export function ChatSidebar({
         <ConversationSummary
           session={summarySession}
           isLoading={summaryLoading}
-          onClose={() => setSummarySession(null)}
+          onClose={() => setSummarySessionId(null)}
         />
       )}
     </div>

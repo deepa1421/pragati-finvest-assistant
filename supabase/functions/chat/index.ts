@@ -151,8 +151,13 @@ Output ONLY the rewritten query, nothing else.`
     }
 
     // Step 4: Generate answer with Gemini
-    const langInstruction = language && language !== 'en'
-      ? `IMPORTANT: Respond in the same language as the user. The user's language code is "${language}". Detect and match their language.`
+    const langMap: Record<string, string> = {
+      hi: "Hindi", mr: "Marathi", ta: "Tamil", te: "Telugu",
+      kn: "Kannada", ml: "Malayalam", bn: "Bengali", gu: "Gujarati", pa: "Punjabi",
+    };
+    const langName = langMap[language] || "";
+    const langInstruction = language && language !== 'en' && langName
+      ? `CRITICAL INSTRUCTION: You MUST respond ENTIRELY in ${langName} (language code: "${language}"). Every word of your response must be in ${langName}. Do NOT respond in English.`
       : '';
 
     const systemPrompt = `You are Pragati, the official AI assistant for Ambit Finvest (finvest.ambit.co), an RBI-registered NBFC providing business loans and vehicle loans to MSMEs in India.
