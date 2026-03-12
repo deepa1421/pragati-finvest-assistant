@@ -98,7 +98,7 @@ export function useChat() {
       .single();
 
     if (userMsg) {
-      setMessages(prev => [...prev, userMsg as Message]);
+      setMessages(prev => [...prev, userMsg as unknown as Message]);
     }
 
     // Update session title from first message
