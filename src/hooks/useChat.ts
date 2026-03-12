@@ -43,7 +43,7 @@ export function useChat() {
       .select('*')
       .eq('session_id', sessionId)
       .order('created_at', { ascending: true });
-    if (data) setMessages(data as Message[]);
+    if (data) setMessages(data as unknown as Message[]);
   }, []);
 
   // Create new session
