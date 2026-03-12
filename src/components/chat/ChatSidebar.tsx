@@ -26,8 +26,10 @@ export function ChatSidebar({
   onGenerateSummary,
 }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [summarySession, setSummarySession] = useState<ChatSession | null>(null);
+  const [summarySessionId, setSummarySessionId] = useState<string | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
+
+  const summarySession = summarySessionId ? sessions.find(s => s.id === summarySessionId) ?? null : null;
 
   const handleSearch = (q: string) => {
     setSearchQuery(q);
@@ -35,7 +37,7 @@ export function ChatSidebar({
   };
 
   const handleSummary = async (session: ChatSession) => {
-    setSummarySession(session);
+    setSummarySessionId(session.id);
     if (!session.summary) {
       setSummaryLoading(true);
       await onGenerateSummary(session.id);
