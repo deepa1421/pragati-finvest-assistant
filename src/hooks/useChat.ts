@@ -16,9 +16,19 @@ export type ChatSession = {
   summary: any;
   created_at: string;
   updated_at: string;
+  browser_id?: string;
 };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
+
+function getBrowserId(): string {
+  let id = localStorage.getItem('pragati_browser_id');
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem('pragati_browser_id', id);
+  }
+  return id;
+}
 
 export function useChat() {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
@@ -27,11 +37,13 @@ export function useChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
 
-  // Load sessions
+  // Load sessions (filtered by browser_id)
   const loadSessions = useCallback(async () => {
+    const browserId = getBrowserId();
     const { data } = await supabase
       .from('chat_sessions')
       .select('*')
+      .eq('browser_id', browserId)
       .order('updated_at', { ascending: false });
     if (data) setSessions(data as ChatSession[]);
   }, []);
@@ -48,9 +60,10 @@ export function useChat() {
 
   // Create new session
   const createSession = useCallback(async (language: string = 'en') => {
+    const browserId = getBrowserId();
     const { data } = await supabase
       .from('chat_sessions')
-      .insert({ title: 'New Chat', language })
+      .insert({ title: 'New Chat', language, browser_id: browserId } as any)
       .select()
       .single();
     if (data) {
@@ -109,7 +122,7 @@ export function useChat() {
     }
 
     setIsLoading(true);
-    setIsStreaming(true);
+    setIsStreaming(false);
 
     let assistantContent = '';
 
@@ -152,6 +165,7 @@ export function useChat() {
       while (!streamDone) {
         const { done, value } = await reader.read();
         if (done) break;
+        setIsStreaming(true);
         textBuffer += decoder.decode(value, { stream: true });
 
         let newlineIndex: number;
@@ -241,6 +255,7 @@ export function useChat() {
 
   // Search sessions
   const searchSessions = useCallback(async (query: string) => {
+    const browserId = getBrowserId();
     if (!query.trim()) {
       await loadSessions();
       return;
@@ -248,6 +263,7 @@ export function useChat() {
     const { data } = await supabase
       .from('chat_sessions')
       .select('*')
+      .eq('browser_id', browserId)
       .ilike('title', `%${query}%`)
       .order('updated_at', { ascending: false });
     if (data) setSessions(data as ChatSession[]);
