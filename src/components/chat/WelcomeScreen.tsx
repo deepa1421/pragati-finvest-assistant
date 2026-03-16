@@ -59,12 +59,68 @@ const greetings: Record<string, { greeting: string; subtitle: string; disclaimer
   },
 };
 
-const suggestions = [
-  { icon: CreditCard, text: 'What types of business loans does Ambit Finvest offer?' },
-  { icon: Truck, text: 'Tell me about used vehicle loans' },
-  { icon: HelpCircle, text: 'How can I check my loan eligibility?' },
-  { icon: MessageSquare, text: 'What is the loan application process?' },
-];
+const suggestions: Record<string, { icon: typeof CreditCard; text: string }[]> = {
+  en: [
+    { icon: CreditCard, text: 'What types of business loans does Ambit Finvest offer?' },
+    { icon: Truck, text: 'Tell me about used vehicle loans' },
+    { icon: HelpCircle, text: 'How can I check my loan eligibility?' },
+    { icon: MessageSquare, text: 'What is the loan application process?' },
+  ],
+  hi: [
+    { icon: CreditCard, text: 'Ambit Finvest किस प्रकार के बिज़नेस लोन देता है?' },
+    { icon: Truck, text: 'पुराने वाहन लोन के बारे में बताएं' },
+    { icon: HelpCircle, text: 'मैं अपनी लोन पात्रता कैसे जाँचूँ?' },
+    { icon: MessageSquare, text: 'लोन आवेदन की प्रक्रिया क्या है?' },
+  ],
+  mr: [
+    { icon: CreditCard, text: 'Ambit Finvest कोणत्या प्रकारचे बिझनेस लोन देते?' },
+    { icon: Truck, text: 'जुन्या वाहन कर्जाबद्दल सांगा' },
+    { icon: HelpCircle, text: 'मी माझी कर्ज पात्रता कशी तपासू?' },
+    { icon: MessageSquare, text: 'कर्ज अर्जाची प्रक्रिया काय आहे?' },
+  ],
+  ta: [
+    { icon: CreditCard, text: 'Ambit Finvest என்ன வகையான வணிகக் கடன்களை வழங்குகிறது?' },
+    { icon: Truck, text: 'பயன்படுத்திய வாகனக் கடன் பற்றி சொல்லுங்கள்' },
+    { icon: HelpCircle, text: 'எனது கடன் தகுதியை எப்படி சரிபார்ப்பது?' },
+    { icon: MessageSquare, text: 'கடன் விண்ணப்ப செயல்முறை என்ன?' },
+  ],
+  te: [
+    { icon: CreditCard, text: 'Ambit Finvest ఏ రకమైన వ్యాపార రుణాలు అందిస్తుంది?' },
+    { icon: Truck, text: 'వాడిన వాహన రుణాల గురించి చెప్పండి' },
+    { icon: HelpCircle, text: 'నా రుణ అర్హతను ఎలా తనిఖీ చేయాలి?' },
+    { icon: MessageSquare, text: 'రుణ దరఖాస్తు ప్రక్రియ ఏమిటి?' },
+  ],
+  kn: [
+    { icon: CreditCard, text: 'Ambit Finvest ಯಾವ ರೀತಿಯ ವ್ಯಾಪಾರ ಸಾಲಗಳನ್ನು ನೀಡುತ್ತದೆ?' },
+    { icon: Truck, text: 'ಬಳಸಿದ ವಾಹನ ಸಾಲದ ಬಗ್ಗೆ ಹೇಳಿ' },
+    { icon: HelpCircle, text: 'ನನ್ನ ಸಾಲ ಅರ್ಹತೆಯನ್ನು ಹೇಗೆ ಪರಿಶೀಲಿಸುವುದು?' },
+    { icon: MessageSquare, text: 'ಸಾಲ ಅರ್ಜಿ ಪ್ರಕ್ರಿಯೆ ಏನು?' },
+  ],
+  ml: [
+    { icon: CreditCard, text: 'Ambit Finvest എന്തൊക്കെ ബിസിനസ് ലോണുകൾ നൽകുന്നു?' },
+    { icon: Truck, text: 'ഉപയോഗിച്ച വാഹന ലോണിനെ കുറിച്ച് പറയൂ' },
+    { icon: HelpCircle, text: 'എന്റെ ലോൺ യോഗ്യത എങ്ങനെ പരിശോധിക്കാം?' },
+    { icon: MessageSquare, text: 'ലോൺ അപേക്ഷാ പ്രക്രിയ എന്താണ്?' },
+  ],
+  bn: [
+    { icon: CreditCard, text: 'Ambit Finvest কী ধরনের ব্যবসায়িক ঋণ দেয়?' },
+    { icon: Truck, text: 'পুরানো গাড়ির ঋণ সম্পর্কে বলুন' },
+    { icon: HelpCircle, text: 'আমার ঋণের যোগ্যতা কীভাবে যাচাই করব?' },
+    { icon: MessageSquare, text: 'ঋণ আবেদনের প্রক্রিয়া কী?' },
+  ],
+  gu: [
+    { icon: CreditCard, text: 'Ambit Finvest કયા પ્રકારની બિઝનેસ લોન આપે છે?' },
+    { icon: Truck, text: 'વપરાયેલ વાહન લોન વિશે જણાવો' },
+    { icon: HelpCircle, text: 'મારી લોન પાત્રતા કેવી રીતે તપાસવી?' },
+    { icon: MessageSquare, text: 'લોન અરજીની પ્રક્રિયા શું છે?' },
+  ],
+  pa: [
+    { icon: CreditCard, text: 'Ambit Finvest ਕਿਸ ਤਰ੍ਹਾਂ ਦੇ ਕਾਰੋਬਾਰੀ ਕਰਜ਼ੇ ਦਿੰਦਾ ਹੈ?' },
+    { icon: Truck, text: 'ਪੁਰਾਣੇ ਵਾਹਨ ਕਰਜ਼ੇ ਬਾਰੇ ਦੱਸੋ' },
+    { icon: HelpCircle, text: 'ਮੈਂ ਆਪਣੀ ਕਰਜ਼ਾ ਯੋਗਤਾ ਕਿਵੇਂ ਜਾਂਚਾਂ?' },
+    { icon: MessageSquare, text: 'ਕਰਜ਼ਾ ਅਰਜ਼ੀ ਦੀ ਪ੍ਰਕਿਰਿਆ ਕੀ ਹੈ?' },
+  ],
+};
 
 export function WelcomeScreen({ language, onSuggestionClick }: Props) {
   const lang = greetings[language] || greetings.en;
