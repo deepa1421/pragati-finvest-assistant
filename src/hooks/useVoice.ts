@@ -84,9 +84,24 @@ export function useVoice() {
       pa: 'pa-IN',
     };
 
-    utterance.lang = langMap[language] || language;
+    const targetLang = langMap[language] || language;
+    utterance.lang = targetLang;
     utterance.rate = 0.9;
-    utterance.pitch = 1;
+    utterance.pitch = 1.1;
+
+    // Try to select a female voice
+    const voices = synthRef.current.getVoices();
+    const femaleVoice = voices.find(
+      (v) => v.lang === targetLang && /female|woman|zira|samantha|google.*female/i.test(v.name)
+    ) || voices.find(
+      (v) => v.lang === targetLang && !/male|david|daniel/i.test(v.name)
+    ) || voices.find(
+      (v) => v.lang.startsWith(targetLang.split('-')[0]) && !/male|david|daniel/i.test(v.name)
+    );
+
+    if (femaleVoice) {
+      utterance.voice = femaleVoice;
+    }
 
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
