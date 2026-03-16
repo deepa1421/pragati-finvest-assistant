@@ -93,13 +93,13 @@ export function ChatArea({
               />
             ))}
             {isLoading && !isStreaming && (
-              <div className="flex items-center gap-2 py-4 px-4">
+              <div className="flex items-center gap-3 py-4 px-4">
                 <div className="flex gap-1">
                   <span className="typing-dot w-2 h-2 rounded-full bg-primary" />
                   <span className="typing-dot w-2 h-2 rounded-full bg-primary" />
                   <span className="typing-dot w-2 h-2 rounded-full bg-primary" />
                 </div>
-                <span className="text-xs text-muted-foreground">Pragati is thinking...</span>
+                <span className="text-sm text-muted-foreground">Typing...</span>
               </div>
             )}
           </div>
