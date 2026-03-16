@@ -122,7 +122,7 @@ export function useChat() {
     }
 
     setIsLoading(true);
-    setIsStreaming(true);
+    setIsStreaming(false);
 
     let assistantContent = '';
 
