@@ -25,7 +25,7 @@ function getBrowserId(): string {
   let id = localStorage.getItem('sahayak_browser_id');
   if (!id) {
     id = crypto.randomUUID();
-    localStorage.setItem('pragati_browser_id', id);
+    localStorage.setItem('sahayak_browser_id', id);
   }
   return id;
 }
