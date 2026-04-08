@@ -18,7 +18,7 @@ serve(async (req) => {
 
     const userMessage = messages[messages.length - 1]?.content || "";
 
-    // Step 1: Query Rewriting
+    // Step 1: Query Rewriting - expand the user query for better retrieval
     const rewriteResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -30,9 +30,9 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are a query rewriting assistant for a financial services company that provides business loans and vehicle loans.
-Rewrite the user's query into a clear, expanded search query that will help find relevant information.
-Preserve the original meaning but add context about financial services (secured business loans, unsecured business loans, used vehicle loans).
+            content: `You are a query rewriting assistant for Ambit Finvest (finvest.ambit.co), an RBI-registered NBFC providing business loans and vehicle loans.
+Rewrite the user's query into a clear, expanded search query that will help find relevant information from the Finvest website.
+Preserve the original meaning but add context about Ambit Finvest's services (secured business loans/Vyapar Loan, unsecured business loans/Udyam Loan, used vehicle loans/Parivahan Loan).
 Output ONLY the rewritten query, nothing else.`
           },
           { role: "user", content: userMessage }
@@ -47,7 +47,7 @@ Output ONLY the rewritten query, nothing else.`
     }
     console.log("Rewritten query:", rewrittenQuery);
 
-    // Step 2: Hybrid Search
+    // Step 2: Hybrid Search - full-text search from knowledge base
     const searchResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/search_knowledge`, {
       method: "POST",
       headers: {
@@ -66,6 +66,7 @@ Output ONLY the rewritten query, nothing else.`
       chunks = await searchResponse.json();
     }
 
+    // Also do a simple keyword search for broader coverage
     const keywords = rewrittenQuery.split(/\s+/).filter((w: string) => w.length > 3).slice(0, 5);
     if (keywords.length > 0) {
       const keywordSearch = await fetch(
@@ -90,11 +91,12 @@ Output ONLY the rewritten query, nothing else.`
 
     console.log(`Found ${chunks.length} chunks`);
 
-    // Step 3: Re-ranking
+    // Step 3: Re-ranking - use LLM to select most relevant chunks
     let context = "";
     let sources: { url: string; title: string }[] = [];
 
     if (chunks.length > 0) {
+      // If we have many chunks, re-rank them
       if (chunks.length > 5) {
         const rerankResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
@@ -131,6 +133,7 @@ Output ONLY the rewritten query, nothing else.`
               }
             }
           } catch {
+            // Use top 5 by rank
             chunks = chunks.slice(0, 5);
           }
         } else {
@@ -143,10 +146,11 @@ Output ONLY the rewritten query, nothing else.`
         url: c.source_url,
         title: c.page_title,
       }));
+      // Deduplicate sources
       sources = sources.filter((s, i, arr) => arr.findIndex(a => a.url === s.url) === i);
     }
 
-    // Step 4: Generate answer
+    // Step 4: Generate answer with Gemini
     const langMap: Record<string, string> = {
       hi: "Hindi", mr: "Marathi", ta: "Tamil", te: "Telugu",
       kn: "Kannada", ml: "Malayalam", bn: "Bengali", gu: "Gujarati", pa: "Punjabi",
@@ -156,21 +160,20 @@ Output ONLY the rewritten query, nothing else.`
       ? `CRITICAL INSTRUCTION: You MUST respond ENTIRELY in ${langName} (language code: "${language}"). Every word of your response must be in ${langName}. Do NOT respond in English.`
       : '';
 
-    const systemPrompt = `You are Sahayak, an AI assistant for a financial services company that provides business loans and vehicle loans to MSMEs in India.
+    const systemPrompt = `You are Pragati, the official AI assistant for Ambit Finvest (finvest.ambit.co), an RBI-registered NBFC providing business loans and vehicle loans to MSMEs in India.
 
 ${langInstruction}
 
 RULES:
 1. Answer STRICTLY from the provided context. Do not make up information.
-2. If the answer is not in the context, say: "This information is not currently available. Please contact our support team for more details."
+2. If the answer is not in the context, say: "This information is not available on the Finvest website. Please contact Ambit Finvest at +91 9115998000 or customercare@ambit.co for more details."
 3. NEVER provide investment advice, stock recommendations, portfolio suggestions, or financial predictions.
-4. If asked for investment advice, respond: "I cannot provide investment advice. Please consult a certified financial advisor."
+4. If asked for investment advice, respond: "I cannot provide investment advice. Please consult a certified financial advisor or contact the Finvest team at +91 9115998000."
 5. Be helpful, professional, and concise.
 6. When citing information, mention it naturally in your response.
-7. If the user greets you, respond warmly and introduce yourself as Sahayak.
-8. NEVER mention specific company phone numbers, email addresses, or physical addresses. If asked for contact info, say: "Please visit our website for contact details."
+7. If the user greets you, respond warmly and introduce yourself as Pragati.
 
-CONTEXT FROM WEBSITE:
+CONTEXT FROM FINVEST WEBSITE:
 ${context || "No relevant context found in the knowledge base."}`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -183,7 +186,7 @@ ${context || "No relevant context found in the knowledge base."}`;
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
-          ...messages.slice(-10),
+          ...messages.slice(-10), // Keep last 10 messages for context window
         ],
         stream: true,
       }),
@@ -206,6 +209,7 @@ ${context || "No relevant context found in the knowledge base."}`;
       throw new Error(`AI gateway error: ${status}`);
     }
 
+    // Prepend sources as first SSE event
     const encoder = new TextEncoder();
     const sourcesEvent = `data: ${JSON.stringify({ sources })}\n\n`;
 

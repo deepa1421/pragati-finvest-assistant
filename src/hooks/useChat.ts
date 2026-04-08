@@ -22,10 +22,10 @@ export type ChatSession = {
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
 function getBrowserId(): string {
-  let id = localStorage.getItem('sahayak_browser_id');
+  let id = localStorage.getItem('pragati_browser_id');
   if (!id) {
     id = crypto.randomUUID();
-    localStorage.setItem('sahayak_browser_id', id);
+    localStorage.setItem('pragati_browser_id', id);
   }
   return id;
 }

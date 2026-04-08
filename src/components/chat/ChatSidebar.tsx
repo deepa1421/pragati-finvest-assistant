@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Plus, Search, Trash2, X, MessageSquare, FileText } from 'lucide-react';
 import { ChatSession } from '@/hooks/useChat';
-import botLogo from '@/assets/bot-logo.png';
+import ambitLogo from '@/assets/ambit-finvest-logo.png';
 import { ConversationSummary } from './ConversationSummary';
 
 type Props = {
@@ -49,10 +49,10 @@ export function ChatSidebar({
     <div className="w-72 h-full bg-sidebar flex flex-col border-r border-sidebar-border">
       {/* Logo & branding */}
       <div className="p-4 flex items-center gap-3 border-b border-sidebar-border">
-        <img src={botLogo} alt="FinServe Corp" className="h-10 w-10 rounded-lg object-contain bg-card p-1" />
+        <img src={ambitLogo} alt="Ambit Finvest" className="h-10 w-10 rounded-lg object-contain bg-card p-1" />
         <div className="flex-1 min-w-0">
-          <h1 className="text-sm font-display font-bold text-sidebar-foreground truncate">Sahayak</h1>
-          <p className="text-xs text-sidebar-foreground/60">by FinServe Corp</p>
+          <h1 className="text-sm font-display font-bold text-sidebar-foreground truncate">Pragati</h1>
+          <p className="text-xs text-sidebar-foreground/60">by Ambit Finvest</p>
         </div>
         <button onClick={onClose} className="p-1 rounded hover:bg-sidebar-hover text-sidebar-foreground/60 md:hidden">
           <X className="h-4 w-4" />
@@ -124,7 +124,7 @@ export function ChatSidebar({
       {/* Footer disclaimer */}
       <div className="p-3 border-t border-sidebar-border">
         <p className="text-[10px] text-sidebar-foreground/40 leading-tight">
-          This chatbot provides general information and does not offer financial or investment advice.
+          This chatbot provides information based on the Finvest website and does not offer financial or investment advice.
         </p>
       </div>
 
